@@ -6,14 +6,13 @@ pipeline {
         REGISTRY         = 'docker.io'
         REGISTRY_CRED_ID = 'docker-hub-credentials'
         IMAGE_TAG        = "${BUILD_NUMBER}"
-        GRADLE_OPTS      = '-Dorg.gradle.internal.http.connectionTimeout=120000 -Dorg.gradle.internal.http.socketTimeout=120000'
     }
 
     stages {
         stage('Build & Test') {
             steps {
                 sh 'chmod +x gradlew'
-                sh './gradlew clean build --no-daemon'
+                sh './gradlew clean build --no-daemon -Dsun.net.client.defaultConnectTimeout=60000 -Dsun.net.client.defaultReadTimeout=60000'
             }
             post {
                 always {
