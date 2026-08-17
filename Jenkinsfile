@@ -6,16 +6,18 @@ pipeline {
         REGISTRY         = 'docker.io'
         REGISTRY_CRED_ID = 'docker-hub-credentials'
         IMAGE_TAG        = "${BUILD_NUMBER}"
+        GRADLE_OPTS      = '-Dorg.gradle.internal.http.connectionTimeout=120000 -Dorg.gradle.internal.http.socketTimeout=120000'
     }
 
     stages {
         stage('Build & Test') {
             steps {
-                sh './gradlew clean build'
+                sh 'chmod +x gradlew'
+                sh './gradlew clean build --no-daemon'
             }
             post {
                 always {
-                    junit '**/build/test-results/test/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/build/test-results/test/*.xml'
                 }
             }
         }
